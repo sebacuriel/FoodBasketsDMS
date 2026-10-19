@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="FoodBasketsDMS:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/FoodBasketsDMS_jar</output-path>
+    <root id="archive" name="FoodBasketsDMS.jar">
+      <element id="module-output" name="FoodBasketsDMS" />
+    </root>
+  </artifact>
+</component>
