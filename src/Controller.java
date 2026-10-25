@@ -31,7 +31,27 @@ public class Controller
      */
     public void CreateBasket()
     {
-        System.out.print("Enter the Basket Name: ");
+        System.out.println("= Fruit List =\n");
+
+        for (Food food : foodList.getFoods())
+        {
+            if (food.getCategory().equals("Fruit"))
+            {
+                System.out.println("- " + food.getFoodName());
+            }
+        }
+
+        System.out.println("\n= Additives List =\n");
+
+        for (Food food : foodList.getFoods())
+        {
+            if (food.getCategory().equals("Additive"))
+            {
+                System.out.println("- " + food.getFoodName());
+            }
+        }
+
+        System.out.print("\nEnter the Basket Name: ");
         String name = scanner.nextLine();
 
         if (name.isBlank())
@@ -47,7 +67,7 @@ public class Controller
 
         do
         {
-            System.out.print("Enter a Fruit (Apple, Banana, Strawberry): ");
+            System.out.print("Enter a Fruit: ");
             String input = scanner.nextLine();
 
             fruit1 = null;
@@ -71,7 +91,7 @@ public class Controller
 
         do
         {
-            System.out.print("Enter a Fruit (Apple, Banana, Strawberry): ");
+            System.out.print("Enter a Fruit: ");
             String input = scanner.nextLine();
 
             fruit2 = null;
@@ -95,7 +115,7 @@ public class Controller
 
         do
         {
-            System.out.print("Enter a Fruit (Apple, Banana, Strawberry): ");
+            System.out.print("Enter a Fruit: ");
             String input = scanner.nextLine();
 
             fruit3 = null;
@@ -119,7 +139,7 @@ public class Controller
 
         do
         {
-            System.out.print("Enter an Additive (Granola or Milk): ");
+            System.out.print("Enter an Additive: ");
             String input = scanner.nextLine();
 
             additive1 = null;
@@ -143,7 +163,7 @@ public class Controller
 
         do
         {
-            System.out.print("Enter an Additive (Granola or Milk): ");
+            System.out.print("Enter an Additive: ");
             String input = scanner.nextLine();
 
             additive2 = null;
@@ -181,7 +201,7 @@ public class Controller
      */
     public void ImportBaskets()
     {
-        System.out.print("File Directory: ");
+        System.out.print("Enter the File's Directory: ");
         String directory = scanner.nextLine();
 
         try
@@ -396,12 +416,34 @@ public class Controller
                                 {
                                     if (cat.equals("Fruit"))
                                     {
-                                        System.out.print("Enter a Fruit (Apple, Banana, Strawberry): ");
+                                        System.out.println("\n= Fruit List =\n");
+
+                                        for (Food food : foodList.getFoods())
+                                        {
+                                            if (food.getCategory().equals("Fruit"))
+                                            {
+                                                System.out.println("- " + food.getFoodName());
+                                            }
+                                        }
+
+                                        System.out.println();
+                                        System.out.print("Enter a Fruit: ");
                                     }
 
                                     else
                                     {
-                                        System.out.print("Enter an Additive (Granola or Milk): ");
+                                        System.out.println("\n= Additives List =\n");
+
+                                        for (Food food : foodList.getFoods())
+                                        {
+                                            if (food.getCategory().equals("Additive"))
+                                            {
+                                                System.out.println("- " + food.getFoodName());
+                                            }
+                                        }
+
+                                        System.out.println();
+                                        System.out.print("Enter an Additive: ");
                                     }
 
                                     String input = scanner.nextLine();
@@ -518,9 +560,31 @@ public class Controller
             {
                 if (basket.getBasketNumber() == n)
                 {
-                    baskets.remove(basket);
+                    String selection;
 
-                    System.out.println("\nRemoved Basket #" + n);
+                    do
+                    {
+                        System.out.print("Confirm deletion of Basket #" + n + "? (Y/N) - ");
+                        selection = scanner.next();
+
+                        if (!selection.equalsIgnoreCase("Y") && !selection.equalsIgnoreCase("N"))
+                        {
+                            System.out.println("\nInvalid.\n");
+                        }
+                    }
+                    while (!selection.equalsIgnoreCase("Y") && !selection.equalsIgnoreCase("N"));
+
+                    if (selection.equalsIgnoreCase("Y"))
+                    {
+                        baskets.remove(basket);
+
+                        System.out.println("\nRemoved Basket #" + n);
+                    }
+
+                    else
+                    {
+                        System.out.println("\nBasket was not deleted.");
+                    }
 
                     return;
                 }

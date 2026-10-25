@@ -19,9 +19,11 @@ public class FoodList
         foods.add(new Food("Apple", "Fruit", 30, 80));
         foods.add(new Food("Banana", "Fruit", 10, 100));
         foods.add(new Food("Strawberry", "Fruit", 8, 40));
+        // todo: add more in gui phase
 
         foods.add(new Food("Granola", "Additive", 5, 60));
         foods.add(new Food("Milk", "Additive", 15, 80));
+        // todo: add more in gui phase
     }
 
     public ArrayList<Food> getFoods()

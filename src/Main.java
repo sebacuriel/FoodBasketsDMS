@@ -30,7 +30,9 @@ public class Main
 
         while (true)
         {
-            System.out.println("\n- Food Baskets DMS -\n");
+            System.out.println("\n- Welcome to the Food Baskets DMS -\n");
+
+            System.out.println("Type a number to select an option.\n");
 
             System.out.println("1. Create Basket");
             System.out.println("2. Import Baskets");

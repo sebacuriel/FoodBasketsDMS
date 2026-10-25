@@ -36,6 +36,11 @@ public class Basket
         return basketNumber;
     }
 
+    public String getBasketName()
+    {
+        return basketName;
+    }
+
     public Food getFruit1()
     {
         return fruit1;
