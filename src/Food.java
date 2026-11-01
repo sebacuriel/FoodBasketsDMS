@@ -1,7 +1,7 @@
 /**
  * Sebastian Yael Curiel Franco
  * Software Development I - CEN 3024C - 13038
- * October 18, 2026
+ * October 31, 2026
  * Food.java
  * This class defines a Food object with a name,
  * category, preparation time, and calories.
@@ -40,5 +40,10 @@ public class Food
     public int getCalories()
     {
         return calories;
+    }
+
+    public String toString()
+    {
+        return getFoodName();
     }
 }

@@ -1,15 +1,17 @@
 /**
  * Sebastian Yael Curiel Franco
  * Software Development I - CEN 3024C - 13038
- * October 18, 2026
+ * October 31, 2026
  * Main.java
  * This application asks the user to select an option
  * to either create, import, view, edit, or delete baskets.
  * It is used to more easily prepare meal plans.
  */
 
+import java.awt.event.*;
 import java.io.*;
-import java.util.*;
+import java.awt.*;
+import javax.swing.*;
 
 public class Main
 {
@@ -23,80 +25,84 @@ public class Main
      */
     public static void main()
     {
-        Scanner scanner = new Scanner(System.in);
         Controller controller = new Controller();
 
-        int input;
+        JFrame frame = new JFrame("Food Baskets DMS");
+        frame.setSize(1080, 720);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
 
-        while (true)
+        JLabel title = new JLabel("Food Baskets", JLabel.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 48));
+        title.setForeground(new Color(255, 116, 108));
+        title.setBorder(BorderFactory.createEmptyBorder(64, 0, 32, 0));
+
+        JButton CreateBasket = new JButton("Create Basket");
+        JButton ImportBaskets = new JButton("Import Baskets");
+        JButton ViewBaskets = new JButton("View Baskets");
+        JButton ExitProgram = new JButton("Exit Program");
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
+        buttonPanel.setLayout(new GridLayout(4, 1, 0, 16));
+        buttonPanel.setPreferredSize(new Dimension(240, 240));
+
+        buttonPanel.add(CreateBasket);
+        buttonPanel.add(ImportBaskets);
+        buttonPanel.add(ViewBaskets);
+        buttonPanel.add(ExitProgram);
+
+        JPanel center = new JPanel();
+        center.setOpaque(false);
+
+        center.add(buttonPanel);
+
+        Background mainPanel = new Background();
+        mainPanel.setLayout(new BorderLayout());
+
+        mainPanel.add(title, BorderLayout.NORTH);
+        mainPanel.add(center, BorderLayout.CENTER);
+
+        frame.add(mainPanel);
+
+        frame.setVisible(true);
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        CreateBasket.addActionListener(new ActionListener()
         {
-            System.out.println("\n- Welcome to the Food Baskets DMS -\n");
-
-            System.out.println("Type a number to select an option.\n");
-
-            System.out.println("1. Create Basket");
-            System.out.println("2. Import Baskets");
-            System.out.println("3. View Baskets");
-            System.out.println("4. Edit Basket");
-            System.out.println("5. Delete Basket");
-            System.out.println("6. Exit Program\n");
-
-            try
+            @Override
+            public void actionPerformed(ActionEvent e)
             {
-                input = scanner.nextInt();
-                scanner.nextLine();
-
-                System.out.println();
-
-                switch (input)
-                {
-                    case 1:
-
-                        controller.CreateBasket();
-
-                        break;
-
-                    case 2:
-
-                        controller.ImportBaskets();
-
-                        break;
-
-                    case 3:
-
-                        controller.ViewBaskets();
-
-                        break;
-
-                    case 4:
-
-                        controller.EditBasket();
-
-                        break;
-
-                    case 5:
-
-                        controller.DeleteBasket();
-
-                        break;
-
-                    case 6:
-
-                        System.out.println("\nGoodbye!");
-
-                        return;
-
-                    default:
-
-                        System.out.println("\nInvalid Option");
-                }
+                controller.CreateBasket();
             }
+        });
 
-            catch(InputMismatchException e)
+        ImportBaskets.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
             {
-                System.out.println("\nInvalid Option");
-                scanner.nextLine();
+                controller.ImportBaskets();
             }
-        }
+        });
+
+        ViewBaskets.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                controller.ViewBaskets();
+            }
+        });
+
+        ExitProgram.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                frame.dispose();
+            }
+        });
     }
 }

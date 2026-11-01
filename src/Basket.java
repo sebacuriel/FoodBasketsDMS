@@ -1,16 +1,14 @@
 /**
  * Sebastian Yael Curiel Franco
  * Software Development I - CEN 3024C - 13038
- * October 18, 2026
+ * October 31, 2026
  * Basket.java
  * This class defines a Basket object with a number,
- * name, three fruits, and two additives. It also
- * handles how the information is output.
+ * name, three fruits, and two additives.
  */
 
 public class Basket
 {
-    private final int basketNumber;
     private String basketName;
 
     private Food fruit1;
@@ -19,9 +17,8 @@ public class Basket
     private Food additive1;
     private Food additive2;
 
-    public Basket(int basketNumber, String basketName, Food fruit1, Food fruit2, Food fruit3, Food additive1, Food additive2)
+    public Basket(String basketName, Food fruit1, Food fruit2, Food fruit3, Food additive1, Food additive2)
     {
-        this.basketNumber = basketNumber;
         this.basketName = basketName;
 
         this.fruit1 = fruit1;
@@ -29,11 +26,6 @@ public class Basket
         this.fruit3 = fruit3;
         this.additive1 = additive1;
         this.additive2 = additive2;
-    }
-
-    public int getBasketNumber()
-    {
-        return basketNumber;
     }
 
     public String getBasketName()
@@ -94,18 +86,5 @@ public class Basket
     public void setAdditive2(Food additive2)
     {
         this.additive2 = additive2;
-    }
-
-    public String toString()
-    {
-        return
-
-                "#" + basketNumber +
-                " - " + basketName +
-                " - " + fruit1.getFoodName() +
-                " - " + fruit2.getFoodName() +
-                " - " + fruit3.getFoodName() +
-                " - " + additive1.getFoodName() +
-                " - " + additive2.getFoodName();
     }
 }
