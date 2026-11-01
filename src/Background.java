@@ -7,7 +7,9 @@ public class Background extends JPanel
 
     public Background()
     {
-        ImageIcon fruitBG = new ImageIcon("src/Images/FruitBG.jpg");
+        java.net.URL imageDir = Background.class.getResource("/Images/FruitBG.jpg");
+
+        ImageIcon fruitBG = new ImageIcon(imageDir);
 
         image = fruitBG.getImage();
     }
