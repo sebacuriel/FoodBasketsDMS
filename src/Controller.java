@@ -50,7 +50,7 @@ public class Controller
 
             try
             {
-                connection = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
+                connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
 
                 Statement statement = connection.createStatement();
 
