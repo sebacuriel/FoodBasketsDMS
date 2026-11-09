@@ -1,3 +1,12 @@
+/**
+ * Sebastian Yael Curiel Franco
+ * Software Development I - CEN 3024C - 13038
+ * November 6, 2026
+ * Background.java
+ * This class handles the application's background.
+ * It gets the location of the image file.
+ */
+
 import javax.swing.*;
 import java.awt.*;
 

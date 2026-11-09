@@ -1,7 +1,7 @@
 /**
  * Sebastian Yael Curiel Franco
  * Software Development I - CEN 3024C - 13038
- * October 31, 2026
+ * November 6, 2026
  * Main.java
  * This application asks the user to select an option
  * to either create, import, view, edit, or delete baskets.
@@ -9,7 +9,6 @@
  */
 
 import java.awt.event.*;
-import java.io.*;
 import java.awt.*;
 import javax.swing.*;
 
@@ -27,6 +26,10 @@ public class Main
     {
         Controller controller = new Controller();
 
+        if (!controller.GetDatabase()) return;
+
+        else controller.LoadDatabase();
+
         JFrame frame = new JFrame("Food Baskets DMS");
         frame.setSize(1080, 720);
         frame.setLocationRelativeTo(null);
@@ -38,7 +41,6 @@ public class Main
         title.setBorder(BorderFactory.createEmptyBorder(64, 0, 32, 0));
 
         JButton CreateBasket = new JButton("Create Basket");
-        JButton ImportBaskets = new JButton("Import Baskets");
         JButton ViewBaskets = new JButton("View Baskets");
         JButton ExitProgram = new JButton("Exit Program");
 
@@ -48,7 +50,6 @@ public class Main
         buttonPanel.setPreferredSize(new Dimension(240, 240));
 
         buttonPanel.add(CreateBasket);
-        buttonPanel.add(ImportBaskets);
         buttonPanel.add(ViewBaskets);
         buttonPanel.add(ExitProgram);
 
@@ -75,15 +76,6 @@ public class Main
             public void actionPerformed(ActionEvent e)
             {
                 controller.CreateBasket();
-            }
-        });
-
-        ImportBaskets.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                controller.ImportBaskets();
             }
         });
 

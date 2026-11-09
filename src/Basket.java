@@ -1,7 +1,7 @@
 /**
  * Sebastian Yael Curiel Franco
  * Software Development I - CEN 3024C - 13038
- * October 31, 2026
+ * November 6, 2026
  * Basket.java
  * This class defines a Basket object with a number,
  * name, three fruits, and two additives.
@@ -9,6 +9,7 @@
 
 public class Basket
 {
+    private int basketID;
     private String basketName;
 
     private Food fruit1;
@@ -26,6 +27,11 @@ public class Basket
         this.fruit3 = fruit3;
         this.additive1 = additive1;
         this.additive2 = additive2;
+    }
+
+    public int getBasketID()
+    {
+        return basketID;
     }
 
     public String getBasketName()
@@ -56,6 +62,11 @@ public class Basket
     public Food getAdditive2()
     {
         return additive2;
+    }
+
+    public void setBasketID(int basketID)
+    {
+        this.basketID = basketID;
     }
 
     public void setBasketName(String basketName)

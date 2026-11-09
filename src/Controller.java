@@ -1,17 +1,19 @@
 /**
  * Sebastian Yael Curiel Franco
  * Software Development I - CEN 3024C - 13038
- * October 31, 2026
+ * November 6, 2026
  * Controller.java
  * This class handles all the methods called by the Main class.
+ * It contains a GetDatabase method to obtain a database from the user.
+ * It contains a LoadDatabase method to load the data from the database.
  * It contains a CreateBasket method to handle manually adding baskets.
- * It contains an ImportBaskets method to add multiple baskets through a file.
  * It contains a ViewBaskets method to see the list of created baskets.
  * It contains an EditBasket method to edit information about a selected basket.
  * It contains a CalculateCalories method to automatically get the basket's calories.
  * It contains a CalculatePrepTime method to automatically get the basket's preparation time.
  */
 
+import java.sql.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -24,11 +26,123 @@ public class Controller
 
     private final FoodList foodList = new FoodList();
 
+    private Connection connection;
+
+    /**
+     * method: GetDatabase
+     * parameters: none
+     * return: boolean
+     * purpose: obtains a database from the user
+     */
+    public boolean GetDatabase()
+    {
+        while (true)
+        {
+            JFileChooser chooser = new JFileChooser();
+
+            chooser.setDialogTitle("Select an SQLite Database");
+
+            int c = chooser.showOpenDialog(null);
+
+            if (c != JFileChooser.APPROVE_OPTION) return false;
+
+            File file = chooser.getSelectedFile();
+
+            try
+            {
+                connection = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
+
+                Statement statement = connection.createStatement();
+
+                statement.executeQuery("SELECT BasketID, BasketName, Fruit1, Fruit2, Fruit3, Additive1, Additive2 FROM Basket");
+
+                statement.close();
+
+                return true;
+            }
+
+            catch (SQLException e)
+            {
+                JOptionPane.showMessageDialog(null, "Invalid Database, try again.");
+            }
+        }
+    }
+
+    /**
+     * method: LoadDatabase
+     * parameters: none
+     * return: none
+     * purpose: adds the baskets from the database
+     */
+    public void LoadDatabase()
+    {
+        try
+        {
+            Statement statement = connection.createStatement();
+
+            ResultSet rs = statement.executeQuery("SELECT * FROM Basket");
+
+            while (rs.next())
+            {
+                String basketName = rs.getString("BasketName");
+
+                if (basketName == null || basketName.isBlank())
+                {
+                    basketName = "Unnamed";
+                }
+
+                Food fruit1 = null;
+                Food fruit2 = null;
+                Food fruit3 = null;
+                Food additive1 = null;
+                Food additive2 = null;
+
+                for (Food food : foodList.getFoods())
+                {
+                    if (food.getFoodName().equalsIgnoreCase(rs.getString("Fruit1")))
+                    {
+                        fruit1 = food;
+                    }
+
+                    if (food.getFoodName().equalsIgnoreCase(rs.getString("Fruit2")))
+                    {
+                        fruit2 = food;
+                    }
+
+                    if (food.getFoodName().equalsIgnoreCase(rs.getString("Fruit3")))
+                    {
+                        fruit3 = food;
+                    }
+
+                    if (food.getFoodName().equalsIgnoreCase(rs.getString("Additive1")))
+                    {
+                        additive1 = food;
+                    }
+
+                    if (food.getFoodName().equalsIgnoreCase(rs.getString("Additive2")))
+                    {
+                        additive2 = food;
+                    }
+                }
+
+                Basket basket = new Basket(basketName, fruit1, fruit2, fruit3, additive1, additive2);
+                basket.setBasketID(rs.getInt("BasketID"));
+
+                baskets.add(basket);
+            }
+        }
+
+        catch (SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, "Invalid Database, try again.");
+        }
+    }
+
     /**
      * method: CreateBasket
      * parameters: none
      * return: none
-     * purpose: create baskets and add them to a list
+     * purpose: create baskets and add them to the database
      */
     public void CreateBasket()
     {
@@ -162,13 +276,36 @@ public class Controller
                         basketName = "Unnamed";
                     }
 
-                    Basket basket = new Basket(basketName, f1, f2, f3, a1, a2);
+                    try
+                    {
+                        PreparedStatement statement = connection.prepareStatement("INSERT INTO Basket (BasketName, Fruit1, Fruit2, Fruit3, Additive1, Additive2) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
-                    baskets.add(basket);
+                        statement.setString(1, basketName);
+                        statement.setString(2, f1 == null ? null : f1.getFoodName());
+                        statement.setString(3, f2 == null ? null : f2.getFoodName());
+                        statement.setString(4, f3 == null ? null : f3.getFoodName());
+                        statement.setString(5, a1 == null ? null : a1.getFoodName());
+                        statement.setString(6, a2 == null ? null : a2.getFoodName());
 
-                    JOptionPane.showMessageDialog(frame, "Basket successfully created.");
+                        statement.executeUpdate();
 
-                    frame.dispose();
+                        ResultSet rs = statement.getGeneratedKeys();
+
+                        Basket basket = new Basket(basketName, f1, f2, f3, a1, a2);
+
+                        if (rs.next()) basket.setBasketID(rs.getInt(1));
+
+                        baskets.add(basket);
+
+                        JOptionPane.showMessageDialog(frame, "Basket successfully created.");
+
+                        frame.dispose();
+                    }
+
+                    catch (SQLException ee)
+                    {
+                        JOptionPane.showMessageDialog(frame, "Could not create the basket.");
+                    }
                 }
             }
         });
@@ -181,106 +318,6 @@ public class Controller
                 frame.dispose();
             }
         });
-    }
-
-    /**
-     * method: ImportBaskets
-     * parameters: none
-     * return: none
-     * purpose: add baskets through a file
-     */
-    public void ImportBaskets()
-    {
-        JFileChooser chooser = new JFileChooser();
-
-        int c = chooser.showOpenDialog(null);
-
-        if (c == JFileChooser.APPROVE_OPTION)
-        {
-            File file = chooser.getSelectedFile();
-
-            try
-            {
-                Scanner fscanner = new Scanner(file);
-
-                int line = 0;
-
-                while (fscanner.hasNextLine())
-                {
-                    line++;
-
-                    String data = fscanner.nextLine();
-                    String[] format = data.split(" - ", -1);
-
-                    if (format.length != 6)
-                    {
-                        JOptionPane.showMessageDialog(null, "Invalid Format (Must be Name - F1 - F2 - F3 - A1 - A2) in Line " + line);
-
-                        continue;
-                    }
-
-                    if (format[0].isBlank())
-                    {
-                        format[0] = "Unnamed";
-                    }
-
-                    Food fruit1 = null;
-                    Food fruit2 = null;
-                    Food fruit3 = null;
-                    Food additive1 = null;
-                    Food additive2 = null;
-
-                    for (Food food : foodList.getFoods())
-                    {
-                        if (food.getFoodName().equalsIgnoreCase(format[1]) && food.getCategory().equals("Fruit"))
-                        {
-                            fruit1 = food;
-                        }
-
-                        if (food.getFoodName().equalsIgnoreCase(format[2]) && food.getCategory().equals("Fruit"))
-                        {
-                            fruit2 = food;
-                        }
-
-                        if (food.getFoodName().equalsIgnoreCase(format[3]) && food.getCategory().equals("Fruit"))
-                        {
-                            fruit3 = food;
-                        }
-
-                        if (food.getFoodName().equalsIgnoreCase(format[4]) && food.getCategory().equals("Additive"))
-                        {
-                            additive1 = food;
-                        }
-
-                        if (food.getFoodName().equalsIgnoreCase(format[5]) && food.getCategory().equals("Additive"))
-                        {
-                            additive2 = food;
-                        }
-                    }
-
-                    if (fruit1 != null || fruit2 != null || fruit3 != null || additive1 != null || additive2 != null)
-                    {
-                        Basket basket = new Basket(format[0], fruit1, fruit2, fruit3, additive1, additive2);
-
-                        baskets.add(basket);
-                    }
-
-                    else
-                    {
-                        JOptionPane.showMessageDialog(null, "Invalid food in Line " + line);
-                    }
-                }
-
-                fscanner.close();
-
-                JOptionPane.showMessageDialog(null, "Imported all valid baskets.");
-            }
-
-            catch (FileNotFoundException e)
-            {
-                JOptionPane.showMessageDialog(null, "Invalid File.");
-            }
-        }
     }
 
     /**
@@ -396,11 +433,27 @@ public class Controller
 
                     if (confirm == JOptionPane.YES_OPTION)
                     {
-                        baskets.remove(row);
+                        Basket basket = baskets.get(row);
 
-                        ViewBaskets();
+                        try
+                        {
+                            PreparedStatement statement = connection.prepareStatement("DELETE FROM Basket WHERE BasketID = ?");
 
-                        frame.dispose();
+                            statement.setInt(1, basket.getBasketID());
+
+                            statement.executeUpdate();
+
+                            baskets.remove(row);
+
+                            ViewBaskets();
+
+                            frame.dispose();
+                        }
+
+                        catch (SQLException ee)
+                        {
+                            JOptionPane.showMessageDialog(frame, "Could not delete the basket.");
+                        }
                     }
                 }
             }
@@ -562,16 +615,37 @@ public class Controller
                         basketName = "Unnamed";
                     }
 
-                    basket.setBasketName(basketName);
-                    basket.setFruit1(f1);
-                    basket.setFruit2(f2);
-                    basket.setFruit3(f3);
-                    basket.setAdditive1(a1);
-                    basket.setAdditive2(a2);
+                    try
+                    {
+                        PreparedStatement statement = connection.prepareStatement("UPDATE Basket SET BasketName = ?, Fruit1 = ?, Fruit2 = ?, Fruit3 = ?, Additive1 = ?, Additive2 = ? WHERE BasketID = ?");
 
-                    JOptionPane.showMessageDialog(frame, "Basket successfully edited.");
+                        statement.setString(1, basketName);
+                        statement.setString(2, f1 == null ? null : f1.getFoodName());
+                        statement.setString(3, f2 == null ? null : f2.getFoodName());
+                        statement.setString(4, f3 == null ? null : f3.getFoodName());
+                        statement.setString(5, a1 == null ? null : a1.getFoodName());
+                        statement.setString(6, a2 == null ? null : a2.getFoodName());
 
-                    frame.dispose();
+                        statement.setInt(7, basket.getBasketID());
+
+                        statement.executeUpdate();
+
+                        basket.setBasketName(basketName);
+                        basket.setFruit1(f1);
+                        basket.setFruit2(f2);
+                        basket.setFruit3(f3);
+                        basket.setAdditive1(a1);
+                        basket.setAdditive2(a2);
+
+                        JOptionPane.showMessageDialog(frame, "Basket successfully edited.");
+
+                        frame.dispose();
+                    }
+
+                    catch (SQLException ee)
+                    {
+                        JOptionPane.showMessageDialog(frame, "Could not edit the basket.");
+                    }
                 }
             }
         });
